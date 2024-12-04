@@ -1,0 +1,9 @@
+#ignore
+
+# folders
+__pycache__/
+adventofcode2024.egg-info/
+
+
+# files
+*.txt
