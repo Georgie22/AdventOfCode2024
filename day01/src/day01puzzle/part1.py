@@ -1,6 +1,12 @@
+import os
 from typing import List
 
-from utils import read_file_lines
+
+def read_file_lines(input_path: str) -> list[str]:
+
+    full_input_path = os.path.abspath(input_path)
+    with open(full_input_path, "r") as file:
+        return file.readlines()
 
 
 def process_input(input_path: str) -> tuple[List[int], List[int]]:
@@ -29,6 +35,6 @@ def calculate_distance_sum(list1: List, list2: List) -> int:
 
 
 if __name__ == "__main__":
-    list1, list2 = process_input(input_path="test/test_inputs/day1_test.txt")
+    list1, list2 = process_input(input_path="day01/test/test_inputs/part1_test.txt")
     sum_distance = calculate_distance_sum(list1, list2)
     print(sum_distance)
