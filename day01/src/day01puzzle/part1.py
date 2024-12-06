@@ -34,7 +34,11 @@ def calculate_distance_sum(list1: List, list2: List) -> int:
     return sum_distance
 
 
-if __name__ == "__main__":
-    list1, list2 = process_input(input_path="day01/test/test_inputs/part1_test.txt")
+def main(input_path: str) -> None:
+    list1, list2 = process_input(input_path=input_path)
     sum_distance = calculate_distance_sum(list1, list2)
     print(sum_distance)
+
+
+if __name__ == "__main__":
+    main(input_path="day01/test/test_inputs/part1_test.txt")
