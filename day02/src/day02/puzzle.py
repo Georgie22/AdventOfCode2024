@@ -1,5 +1,5 @@
 from typing import List
-
+from itertools import combinations
 
 def read_file_lines(input_path: str) -> list[str]:
 
@@ -31,7 +31,7 @@ def get_report_element_differences(report: List[int]) -> list[int]:
 
 def check_safety(report: List[int]) -> bool:
 
-    element_differences = get_report_element_differences(report)
+    element_differences = get_report_element_differences(report=report)
     increasing = all(difference > 0 for difference in element_differences)
     decreasing = all(difference < 0 for difference in element_differences)
     in_bounds = all(1 <= abs(difference) < 4 for difference in element_differences)
@@ -44,23 +44,39 @@ def check_safety(report: List[int]) -> bool:
         return False
 
 
-def calculate_safe_report_count(input_path: str) -> int:
+def check_safety_with_dampner(report: List[int]) -> bool:
+
+    safe = check_safety(report=report)
+    if not safe:
+        dampner_reports = combinations(report, len(report)-1)
+        safe = any([check_safety(d_report) for d_report in dampner_reports])
+    
+    return safe
+
+
+def calculate_safe_report_count(input_path: str, dampner: bool = False) -> int:
 
     reports = process_input(input_path=input_path)
     safe_count = 0
     for report in reports:
-        safe = check_safety(report=report)
+        if dampner:
+            safe = check_safety_with_dampner(report=report)
+        else:
+            safe = check_safety(report=report)
         if safe:
             safe_count += 1
-
     return safe_count
 
 
 def main(input_path):
 
     # part 1
-    safe_count = calculate_safe_report_count(input_path)
+    safe_count = calculate_safe_report_count(input_path=input_path)
     print(safe_count)
+
+    # part 2
+    safe_count_with_dampner = calculate_safe_report_count(input_path=input_path, dampner=True)
+    print(safe_count_with_dampner)
 
 
 if __name__ == "__main__":

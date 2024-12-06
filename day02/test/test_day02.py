@@ -25,3 +25,9 @@ def test_calculate_safe_report_count(input_path):
     safe_count = puzzle.calculate_safe_report_count(input_path=input_path)
 
     assert safe_count == 2
+
+
+def test_calculate_safe_report_count_with_dampner(input_path):
+    safe_count_with_dampner = puzzle.calculate_safe_report_count(input_path=input_path, dampner=True)
+
+    assert safe_count_with_dampner == 4
