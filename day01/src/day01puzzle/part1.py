@@ -1,4 +1,3 @@
-import os
 from typing import List
 
 
@@ -40,4 +39,4 @@ def main(input_path: str) -> None:
 
 
 if __name__ == "__main__":
-    main(input_path="day01/test/test_inputs/part1_test.txt")
+    main(input_path="day01/inputs/part1.txt")
