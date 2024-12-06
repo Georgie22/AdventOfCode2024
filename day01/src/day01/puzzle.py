@@ -1,4 +1,5 @@
 from typing import List
+from collections import Counter
 
 
 def read_file_lines(input_path: str) -> list[str]:
@@ -32,11 +33,26 @@ def calculate_distance_sum(list1: List, list2: List) -> int:
     return sum_distance
 
 
+def calculate_simularity_score(list1: List, list2: List) -> int: 
+
+    counts = Counter(list2)
+    scores = [elem * counts[elem] for elem in list1]
+    simularity_score = sum(scores)
+
+    return simularity_score
+
+
 def main(input_path: str) -> None:
     list1, list2 = process_input(input_path=input_path)
+
+    # part 1
     sum_distance = calculate_distance_sum(list1, list2)
     print(sum_distance)
 
+    # part 2
+    simularity_score = calculate_simularity_score(list1, list2)
+    print(simularity_score)
+
 
 if __name__ == "__main__":
-    main(input_path="day01/inputs/part1.txt")
+    main(input_path="day01/inputs/input.txt")
