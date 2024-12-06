@@ -1,10 +1,10 @@
 import pytest
 
-from src.day01puzzle import part1
+from day01.src.day01 import puzzle
 
 @pytest.fixture
 def input_path():
-    return "day01/test/test_inputs/part1_test.txt"
+    return "day01/test/test_inputs/test_input.txt"
 
 @pytest.fixture
 def list1():
@@ -16,7 +16,7 @@ def list2():
 
 
 def test_process_input(input_path, list1, list2):
-    inputs = part1.process_input(input_path=input_path)
+    inputs = puzzle.process_input(input_path=input_path)
 
     assert len(inputs) == 2
     assert inputs[0] == list1
@@ -24,6 +24,12 @@ def test_process_input(input_path, list1, list2):
 
 
 def test_calculate_distance_sum(list1, list2):
-    distance_sum = part1.calculate_distance_sum(list1=list1, list2=list2)
+    distance_sum = puzzle.calculate_distance_sum(list1=list1, list2=list2)
 
     assert distance_sum == 11
+
+
+def test_calculate_simularity_score(list1, list2):
+    simularity_score = puzzle.calculate_simularity_score(list1=list1, list2=list2)
+
+    assert simularity_score == 31
