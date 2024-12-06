@@ -1,6 +1,7 @@
 from typing import List
 from itertools import combinations
 
+
 def read_file_lines(input_path: str) -> list[str]:
 
     with open(input_path, "r") as file:
@@ -68,7 +69,7 @@ def calculate_safe_report_count(input_path: str, dampner: bool = False) -> int:
     return safe_count
 
 
-def main(input_path):
+def main(input_path: str) -> None:
 
     # part 1
     safe_count = calculate_safe_report_count(input_path=input_path)

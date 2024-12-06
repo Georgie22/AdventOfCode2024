@@ -43,6 +43,7 @@ def calculate_simularity_score(list1: List, list2: List) -> int:
 
 
 def main(input_path: str) -> None:
+    
     list1, list2 = process_input(input_path=input_path)
 
     # part 1

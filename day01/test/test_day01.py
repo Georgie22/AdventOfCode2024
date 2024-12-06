@@ -2,13 +2,16 @@ import pytest
 
 from day01.src.day01 import puzzle
 
+
 @pytest.fixture
 def input_path():
     return "day01/test/test_inputs/test_input.txt"
 
+
 @pytest.fixture
 def list1():
     return [3, 4, 2, 1, 3, 3]
+
 
 @pytest.fixture
 def list2():
