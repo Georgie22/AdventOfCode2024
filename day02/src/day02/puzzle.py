@@ -8,7 +8,7 @@ def read_file_lines(input_path: str) -> list[str]:
         return file.readlines()
     
 
-def process_input(input_path: str) -> list[list[int]]:
+def get_reports(input_path: str) -> list[list[int]]:
 
     lines = read_file_lines(input_path=input_path)
 
@@ -50,14 +50,14 @@ def check_safety_with_dampner(report: List[int]) -> bool:
     safe = check_safety(report=report)
     if not safe:
         dampner_reports = combinations(report, len(report)-1)
-        safe = any([check_safety(d_report) for d_report in dampner_reports])
+        safe = any([check_safety(report=d_report) for d_report in dampner_reports])
     
     return safe
 
 
 def calculate_safe_report_count(input_path: str, dampner: bool = False) -> int:
 
-    reports = process_input(input_path=input_path)
+    reports = get_reports(input_path=input_path)
     safe_count = 0
     for report in reports:
         if dampner:
