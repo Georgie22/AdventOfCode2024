@@ -1,0 +1,61 @@
+import pytest
+
+from day04.src.day04 import puzzle
+
+
+@pytest.fixture
+def input_path():
+    return "day04/test/test_inputs/test_input.txt"
+
+
+@pytest.fixture
+def pattern():
+    return "XMAS"
+
+
+@pytest.fixture
+def directions():
+    return [(-1,-1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+
+test_positions =  [
+    (puzzle.Position(0,1), (3,3), True),
+    (puzzle.Position(2,2), (3,3), True),
+    (puzzle.Position(2,3), (3,3), False),
+    (puzzle.Position(-1, 0), (3, 3), False)
+]
+
+
+test_feasible_directions = [
+    (puzzle.Position(0,1), "aa", (3,3), [(0,-1), (1,-1), (1,0), (1,1), (0,1)]),
+    (puzzle.Position(0,1), "aaa", (3,3), [(1,0)])
+]
+
+
+@pytest.mark.parametrize("position, size, expected", test_positions)
+def test_check_position_in_grid(position, size, expected):
+    in_bound = puzzle.check_position_in_grid(position=position, grid_size=size)
+
+    assert in_bound == expected
+
+
+@pytest.mark.parametrize("position, test_pattern, size, expected", test_feasible_directions)
+def test_check_feasible_directions(position, test_pattern, size, expected, directions):
+    feasible_directions = puzzle.check_feasible_directions(position=position, pattern=test_pattern, grid_size=size, directions=directions)
+
+    assert all(elem in expected for elem in feasible_directions)
+
+
+def test_check_for_pattern_match(input_path, pattern):
+    grid = puzzle.create_grid(input_path=input_path)
+    position = puzzle.Position(5, 0)
+    direction = (1, 0)
+
+    match = puzzle.check_for_pattern_match(grid=grid, position=position, pattern=list(pattern), direction=direction)
+    assert match == True
+
+
+def test_get_pattern_count_in_grid(input_path, pattern, directions):
+    pattern_count = puzzle.get_pattern_count_in_grid(input_path=input_path, pattern=pattern, directions=directions)
+
+    assert pattern_count == 18
