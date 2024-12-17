@@ -18,8 +18,8 @@ def list2():
     return [4, 3, 5, 3, 9, 3]
 
 
-def test_process_input(input_path, list1, list2):
-    inputs = puzzle.process_input(input_path=input_path)
+def test_read_input(input_path, list1, list2):
+    inputs = puzzle.read_input(input_path=input_path)
 
     assert len(inputs) == 2
     assert inputs[0] == list1
