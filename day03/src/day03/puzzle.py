@@ -16,10 +16,12 @@ from typing import List
 def read_file_lines(input_path: str) -> list[str]:
 
     with open(input_path, "r") as file:
-        return file.readlines()
+        lines = file.readlines()
+
+    return lines
     
 
-def get_corrupted_memory(input_path: str) -> str:
+def read_corrupted_memory(input_path: str) -> str:
 
     corrupted_memory_lines = read_file_lines(input_path=input_path)
     corrupted_memory = "".join(corrupted_memory_lines)
@@ -36,6 +38,7 @@ def find_instructions(corrupted_memory: str) -> list[str]:
 
 def find_enabled_instructions(corrupted_memory: str) -> list[str]:
 
+    # split memory where don't() conditions found
     dont_splits = re.split(r"don't\(\)", corrupted_memory)
 
     enabled_instructions = []
@@ -81,11 +84,13 @@ def calculate_sum_of_products(product_pairs: List[List[int]]) -> int:
 
 def run_program(input_path: str, enable_conditions: bool = False) -> int:
 
-    corrupted_memory = get_corrupted_memory(input_path=input_path)
+    corrupted_memory = read_corrupted_memory(input_path=input_path)
+
     if enable_conditions:
          instructions = find_enabled_instructions(corrupted_memory)
     else:
         instructions = find_instructions(corrupted_memory=corrupted_memory)
+    
     product_pairs = get_product_pairs(instructions=instructions)
     sum_of_products = calculate_sum_of_products(product_pairs=product_pairs)
 
