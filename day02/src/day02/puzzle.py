@@ -5,10 +5,12 @@ from itertools import combinations
 def read_file_lines(input_path: str) -> list[str]:
 
     with open(input_path, "r") as file:
-        return file.readlines()
+        lines = file.readlines()
+
+    return lines
     
 
-def get_reports(input_path: str) -> list[list[int]]:
+def read_reports(input_path: str) -> list[list[int]]:
 
     lines = read_file_lines(input_path=input_path)
 
@@ -57,7 +59,7 @@ def check_safety_with_dampner(report: List[int]) -> bool:
 
 def calculate_safe_report_count(input_path: str, dampner: bool = False) -> int:
 
-    reports = get_reports(input_path=input_path)
+    reports = read_reports(input_path=input_path)
     safe_count = 0
     for report in reports:
         if dampner:
