@@ -13,8 +13,8 @@ def reports():
     return [[7, 6, 4, 2, 1], [1, 2, 7, 8, 9], [9, 7, 6, 2, 1], [1, 3, 2, 4, 5], [8, 6, 4, 4, 1], [1, 3, 6, 7, 9]]
 
 
-def test_get_reports(input_path, reports):
-    input_reports = puzzle.get_reports(input_path=input_path)
+def test_read_reports(input_path, reports):
+    input_reports = puzzle.read_reports(input_path=input_path)
 
     assert len(input_reports) == 6
     assert len(input_reports[0]) == 5
