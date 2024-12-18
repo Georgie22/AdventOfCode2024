@@ -1,5 +1,6 @@
+import copy
+from typing import List
 from dataclasses import dataclass
-from typing import Type, List
 
 
 @dataclass
@@ -11,17 +12,37 @@ class Position():
 def read_file_lines(input_path: str) -> list[str]:
 
     with open(input_path, "r") as file:
-        return file.readlines()
+        lines = file.readlines()
+    
+    return lines
 
 
 def read_map(input_path:str) -> list[list]:
 
-    map =[]
-    lines = read_file_lines(input_path=input_path)
-    for line in lines:
-        line_elements = list(line.split()[0])
-        map.append(line_elements)
+    rows = read_file_lines(input_path=input_path)
+
+    map = []
+    for row in rows:
+        # remove new line element and take out of the list .split() creates
+        row_string = row.split()[0]
+        # separate row string into the individual characters (that make up the row positions)
+        row_elements = [elem for elem in row_string]
+        map.append(row_elements)
+
     return map
+
+
+def read_starting_position(map: List[List]) -> Position:
+
+    map_height = len(map)
+
+    for i in range(map_height):
+        if "^" in map[i]:
+            j = map[i].index("^")
+            starting_position = Position(i, j)
+            break
+    
+    return starting_position
 
 
 def check_position_is_on_map(position: Position, map_size: tuple) -> bool:
@@ -32,82 +53,94 @@ def check_position_is_on_map(position: Position, map_size: tuple) -> bool:
         return False
 
 
-def get_new_guard_position(guard: str, position: Type[Position]) -> Type[Position]:
+def check_loop(visited_positions: set[tuple, tuple], position: Position, direction: tuple) -> bool:
 
-    if guard == "^":
-        i = position.i - 1
-        j = position.j
-    elif guard == ">":
-        i = position.i
-        j = position.j + 1
-    elif guard == "v":
-        i = position.i + 1
-        j = position.j
-    else:
-        i = position.i
-        j = position.j - 1 
-
-    new_position = Position(i, j)
+    if ((position.i, position.j), direction) in visited_positions:
+        return True
+    else: 
+        return False
     
-    return new_position
 
+def get_visited_positions(map: List[List], starting_position: Position, starting_direction: tuple) -> tuple[list[tuple], bool]:
 
-def get_new_guard_direction(guard: str) -> str:
+    map_height, map_width = (len(map), len(map[0]))
 
-    if guard == "^":
-        guard = ">"
-    elif guard == ">":
-        guard = "v"
-    elif guard == "v":
-        guard = "<"
-    else:
-        guard = "^"
-    
-    return guard
+    # store the first position and direction
+    direction = starting_direction
+    position = starting_position
+    visited_positions = {((position.i, position.j), direction)}
 
-
-def get_guard_positions(map: List[List], guard: str) -> list[Type[Position]]:
-
-    map_height = len(map)
-    map_width = len(map[0])
-
-    starting_position = [(i, j.index(guard)) for i, j in enumerate(map) if "^" in j][0]
-    position = Position(starting_position[0], starting_position[1])
+    # while current position is on the map
     position_on_map = True
+    looping = False
+    while position_on_map and not looping:
 
-    guard_positions = [position]
-    while position_on_map:
-      
-        new_position = get_new_guard_position(guard=guard, position=position)
+        # get the next position and check its on map:
+        new_position = Position(position.i + direction[0], position.j + direction[1])
         new_position_on_map = check_position_is_on_map(position=new_position, map_size=(map_height, map_width))
 
+        # if new position is on the map
         if new_position_on_map:
-            if map[new_position.i][new_position.j] != "#":
+
+            # check we are not looping
+            looping = check_loop(visited_positions=visited_positions, position=new_position, direction=direction)
+            # if looping, end
+            if looping:
+                break
+
+            # otherwise check its not an obstacle and mark the position as visted
+            elif map[new_position.i][new_position.j] != "#":
                 position = new_position
-                guard_positions.append(position)
+                visited_positions.add(((position.i, position.j), direction))
+
+            # else turn right
             else:
-                guard = get_new_guard_direction(guard=guard)
+                direction = (direction[1], -direction[0])
+
+        # if new position is not on the map, end
         else:
             position_on_map = False
-
-    return guard_positions
-
-
-def sum_distinct_guard_positions(map: List[List], guard:str) -> int:
-
-    guard_positions = [(pos.i, pos.j) for pos in get_guard_positions(map=map, guard=guard)]
-    distinct_guard_positions = list(set(guard_positions))
-    guard_position_sum = len(distinct_guard_positions)
-
-    return guard_position_sum
+    
+    return visited_positions, looping
 
 
-def main(input_path: str, guard: str) -> None:
+def count_loops_possible(map: List[List], starting_position: Position, starting_direction: tuple) -> int:
 
+    original_positions, _ = get_visited_positions(map=map, starting_position=starting_position, starting_direction=starting_direction)
+
+    count = 0
+    # for each unique visted position thats not the starting position
+    for p in set(p for p, _ in original_positions):
+        if p != (starting_position.i, starting_position.j):
+
+            # add an obstruction:
+            new_map = copy.deepcopy(map)
+            new_map[p[0]][p[1]] = "#"
+
+            # get new visted positions and check for looping
+            _, looping = get_visited_positions(map=new_map, starting_position=starting_position, starting_direction=starting_direction)
+            if looping:
+                count += 1
+
+    return count
+
+
+def main(input_path: str) -> None:
+
+    # read map and starting position
     map = read_map(input_path=input_path)
-    guard_position_sum = sum_distinct_guard_positions(map=map, guard=guard)
-    print(guard_position_sum)
+    starting_position = read_starting_position(map=map)
+
+    # part 1
+    visited_positions, _ = get_visited_positions(map=map, starting_position=starting_position, starting_direction=(-1, 0))
+    unique_positions = set([pos for pos, _ in visited_positions])
+    print(len(unique_positions))
+
+    # part 2
+    loop_count = count_loops_possible(map=map, starting_position=starting_position, starting_direction=(-1,0))
+    print(loop_count)
 
 
 if __name__ == "__main__":
-    main("day06/inputs/input.txt", guard="^")
+    main(input_path="day06/inputs/input.txt")
+
