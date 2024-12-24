@@ -30,27 +30,30 @@ def read_calibration_equations(input_path: str) -> list[tuple]:
     return calibration_equations
 
 
-def check_operation_sequence(terms: List, operation_sequence: List) -> int:
+def fold(functions, terms) -> int:
 
     accumulator = terms[0]
-    for f, term in zip(operation_sequence, terms[1:]):
-        accumulator = f(accumulator, term)      # operation performed with previous output and next term in iterable
+    for f, term in zip(functions, terms[1:]):
+        if f == "concat":
+            accumulator = int(str(accumulator) + str(term))
+        else:
+            accumulator = f(accumulator, term)
 
     return accumulator
 
 
 def get_calibrated_result(calibration_equation: tuple, operators: List) -> int:
 
-    result = calibration_equation[0]
+    result_term = calibration_equation[0]
     terms = calibration_equation[1]
 
-    # find the possible operation sequences
+    # find the possible sequences of operators
     possible_operations = itertools.product(operators, repeat=len(terms)-1)
 
-    # for each operation sequence check if the equation calibrates (i.e equals the result term). If yes return the result term.
+    # for each sequence check if the equation calibrates (i.e equals the result term). If yes return the result term.
     for operation_sequence in possible_operations:
-        accumulator = check_operation_sequence(terms=terms, operation_sequence=operation_sequence)
-        if accumulator == result:
+        result = fold(functions=operation_sequence, terms=terms)
+        if result == result_term:
             return result
     
     # if the equation is not calibrated return zero
@@ -58,10 +61,6 @@ def get_calibrated_result(calibration_equation: tuple, operators: List) -> int:
             
 
 def get_total_calibration_result(calibration_equations: List[tuple], operators: List) -> int:
-
-    """
-    Return the sum of the result terms for calibrated equations.
-    """
 
     calibration_results = []
 
@@ -80,6 +79,10 @@ def main(input_path: str) -> None:
 
     # Part 1
     total_calibration_result = get_total_calibration_result(calibration_equations=calibration_equations, operators=[operator.mul, operator.add])
+    print(total_calibration_result)
+
+    # Part 2
+    total_calibration_result = get_total_calibration_result(calibration_equations=calibration_equations, operators=[operator.mul, operator.add, "concat"])
     print(total_calibration_result)
 
 
